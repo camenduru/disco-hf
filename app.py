@@ -2,40 +2,12 @@ import gradio as gr
 import os, requests
 from inference import setup_model, colorize_grayscale, predict_anchors
 
-## download checkpoint
-def download_file_from_google_drive(id, destination):
-    def get_confirm_token(response):
-        for key, value in response.cookies.items():
-            if key.startswith('download_warning'):
-                return value
-        return None
-
-    def save_response_content(response, destination):
-        CHUNK_SIZE = 32768
-        with open(destination, "wb") as f:
-            for chunk in response.iter_content(CHUNK_SIZE):
-                if chunk: # filter out keep-alive new chunks
-                    f.write(chunk)
-
-    URL = "https://docs.google.com/uc?export=download"
-    session = requests.Session()
-    response = session.get(URL, params = { 'id' : id }, stream = True)
-    token = get_confirm_token(response)
-
-    if token:
-        params = { 'id' : id, 'confirm' : token }
-        response = session.get(URL, params = params, stream = True)
-    save_response_content(response, destination)
-
-id = "1J4vB6kG4xBLUUKpXr5IhnSSa4maXgRvQ"
-destination = "disco-beta.pth.rar"
-download_file_from_google_drive(id, destination)
+os.system("wget https://huggingface.co/menghanxia/disco/tree/main/disco-beta.pth.tar")
 os.rename("disco-beta.pth.tar", "./checkpoints/disco-beta.pth.tar")
 
 ## step 1: set up model
-device = "cuda"
-checkpt_path = "./checkpoints/disco-beta.pth.tar"
-assert os.path.exists(checkpt_path), "No checkpoint found!"
+device = "cpu"
+checkpt_path = "checkpoints/disco-beta.pth.rar"
 colorizer, colorLabeler = setup_model(checkpt_path, device=device)
 
 def click_colorize(rgb_img, hint_img, n_anchors, is_high_res, is_editable):
@@ -55,9 +27,11 @@ def switch_states(is_checked):
     else:
         return gr.Image.update(visible=False), gr.Button.update(visible=False)
 
-demo = gr.Blocks(title="DISCO: Image Colorization")
+demo = gr.Blocks(title="DISCO")
 with demo:
-    gr.Markdown(value="""**DISCO: image colorization that disentangles color multimodality and spatial affinity via global anchors**.""")
+    gr.Markdown(value="""
+                    **Gradio demo for DISCO: Disentangled Image Colorization via Global Anchors. [Project Page](https://menghanxia.github.io/projects/disco.html)**.
+                    """)
     with gr.Row():
         with gr.Column(scale=1):
             Image_input = gr.Image(type="numpy", label="Input", interactive=True)
@@ -78,15 +52,17 @@ with demo:
     Button_run.click(fn=click_colorize, inputs=[Image_input, Image_anchor, Num_anchor, Radio_resolution, Ckeckbox_editable], \
                     outputs=Image_output)
     ## guiline
-    gr.Markdown(value="""
-                    **Guideline**
-                    1. Upload your image;
+    gr.Markdown(value="""    
+                    **Usage Guideline**
+                    1. upload your image;
                     2. Set up the arguments: "Num. of anchors" and "Colorization resolution";
-                    3. Two modes are supported:
-                        - **Editable**: check ""Show editable anchors" and click "Predict anchors". Then, modify the colors of the predicted anchors (anchor mask will be applied afterward). Finally, click "Colorize" to get the result.
+                    3. Run the colorization (two modes supported):
                         - **Automatic**: click "Colorize" to get the automatically colorized output.
-                    
-                    *To know more about the method, please refer to our project page: [https://menghanxia.github.io/projects/disco.html](https://menghanxia.github.io/projects/disco.html)*
+                        - **Editable**: check ""Show editable anchors" and click "Predict anchors". Then, modify the colors of the predicted anchors (only anchor region will be used). Finally, click "Colorize" to get the result.
+                    """)
+    gr.HTML(value="""
+                <p style='text-align: center'><a href='https://menghanxia.github.io/projects/disco.html' target='_blank'>DISCO Project Page</a> | <a href='https://github.com/MenghanXia/DisentangledColorization' target='_blank'>Github Repo</a></p>
                     """)
     
-demo.launch(server_name='9.134.253.83',server_port=7788)
+#demo.launch(server_name='9.134.253.83',server_port=7788)
+demo.launch()
