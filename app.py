@@ -2,7 +2,7 @@ import gradio as gr
 import os, requests
 from inference import setup_model, colorize_grayscale, predict_anchors
 
-os.system("wget https://huggingface.co/menghanxia/disco/tree/main/disco-beta.pth.rar")
+os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/disco-beta.pth.rar")
 os.rename("disco-beta.pth.rar", "./checkpoints/disco-beta.pth.rar")
 
 ## step 1: set up model
@@ -53,7 +53,7 @@ with demo:
                     outputs=Image_output)
     ## guiline
     gr.Markdown(value="""    
-                    **Usage Guideline**
+                    **Guideline**
                     1. upload your image;
                     2. Set up the arguments: "Num. of anchors" and "Colorization resolution";
                     3. Run the colorization (two modes supported):
