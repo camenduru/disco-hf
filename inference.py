@@ -11,17 +11,13 @@ from utils import util
 
 
 def setup_model(checkpt_path, device="cuda"):
-    seed = 130
-    np.random.seed(seed)
-    torch.manual_seed(seed)
-    torch.cuda.manual_seed(seed)
     #print('--------------', torch.cuda.is_available())
     """Load the model into memory to make running multiple predictions efficient"""
     colorLabeler = basic.ColorLabel(device=device)
     colorizer = model.AnchorColorProb(inChannel=1, outChannel=313, enhanced=True, colorLabeler=colorLabeler)
     colorizer = colorizer.to(device)
     #checkpt_path = "./checkpoints/disco-beta.pth.rar"
-    assert os.path.exists(checkpt_path)
+    assert os.path.exists(checkpt_path), "No checkpoint found!"
     data_dict = torch.load(checkpt_path, map_location=torch.device('cpu'))
     colorizer.load_state_dict(data_dict['state_dict'])
     colorizer.eval()
@@ -89,8 +85,8 @@ def predict_anchors(colorizer, color_class, rgb_img, n_anchors, is_high_res, is_
     n_anchors = min(n_anchors, 14)
     target_res = (512,512) if is_high_res else (256,256)
     input_grays, input_colors, org_grays = prepare_data(rgb_img, target_res)
-    input_grays = input_grays.cuda(non_blocking=True)
-    input_colors = input_colors.cuda(non_blocking=True)
+    input_grays = input_grays.to(device)
+    input_colors = input_colors.to(device)
                 
     sampled_T, sp_size = 0, 16
     pal_logit, ref_logit, enhanced_ab, affinity_map, spix_colors, hint_mask = colorizer(input_grays, \

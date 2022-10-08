@@ -103,6 +103,7 @@ def initialize(X, num_clusters):
     :param num_clusters: (int) number of clusters
     :return: (np.array) initial state
     """
+    np.random.seed(1)
     num_samples = len(X)
     indices = np.random.choice(num_samples, num_clusters, replace=False)
     initial_state = X[indices]
