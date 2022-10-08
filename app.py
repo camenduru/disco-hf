@@ -2,8 +2,8 @@ import gradio as gr
 import os, requests
 from inference import setup_model, colorize_grayscale, predict_anchors
 
-os.system("wget https://huggingface.co/menghanxia/disco/tree/main/disco-beta.pth.tar")
-os.rename("disco-beta.pth.tar", "./checkpoints/disco-beta.pth.tar")
+os.system("wget https://huggingface.co/menghanxia/disco/tree/main/disco-beta.pth.rar")
+os.rename("disco-beta.pth.rar", "./checkpoints/disco-beta.pth.rar")
 
 ## step 1: set up model
 device = "cpu"
