@@ -3,7 +3,8 @@ import os, requests
 import numpy as np
 from inference import setup_model, colorize_grayscale, predict_anchors
 
-RUN_MODE = "remote"
+## local |  remote
+RUN_MODE = "local"
 if RUN_MODE != "local":
     os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/disco-beta.pth.rar")
     os.rename("disco-beta.pth.rar", "./checkpoints/disco-beta.pth.rar")
@@ -36,20 +37,21 @@ with demo:
                     **Gradio demo for DISCO: Disentangled Image Colorization via Global Anchors**. Check our project page [*Here*](https://menghanxia.github.io/projects/disco.html).
                     """)
     with gr.Row():
-        with gr.Column(scale=1):
-            Image_input = gr.Image(type="numpy", label="Input", interactive=True)
-            Image_anchor = gr.Image(type="numpy", label="Anchor", tool="color-sketch", interactive=True, visible=False)
+        with gr.Column():
+            with gr.Row():
+                Image_input = gr.Image(type="numpy", label="Input", interactive=True)
+                Image_anchor = gr.Image(type="numpy", label="Anchor", tool="color-sketch", interactive=True, visible=False)
             with gr.Row():
                 Num_anchor = gr.Number(type="int", value=8, label="Num. of anchors (3~14)")
                 Radio_resolution = gr.Radio(type="index", choices=["Low (256x256)", "High (512x512)"], \
-                                            label="Colorization resolution (Low is more stable)", value="Low (256x256)")
-            Ckeckbox_editable = gr.Checkbox(default=False, label='Show editable anchors')
+                                                label="Colorization resolution (Low is more stable)", value="Low (256x256)")
             with gr.Row():
+                Ckeckbox_editable = gr.Checkbox(default=False, label='Show editable anchors')
                 Button_show_anchor = gr.Button(value="Predict anchors", visible=False)
-                Button_run = gr.Button(value="Colorize")
-        with gr.Column(scale=1):
+            Button_run = gr.Button(value="Colorize")
+        with gr.Column():
             Image_output = gr.Image(type="numpy", label="Output").style(height=480)
-    
+
     Ckeckbox_editable.change(fn=switch_states, inputs=Ckeckbox_editable, outputs=[Image_anchor, Button_show_anchor])
     Button_show_anchor.click(fn=click_predanchors, inputs=[Image_input, Num_anchor, Radio_resolution, Ckeckbox_editable], outputs=Image_anchor)
     Button_run.click(fn=click_colorize, inputs=[Image_input, Image_anchor, Num_anchor, Radio_resolution, Ckeckbox_editable], \
@@ -57,7 +59,7 @@ with demo:
     ## guiline
     gr.Markdown(value="""    
                     **Guideline**
-                    1. upload your image;
+                    1. upload your image; &nbsp; [*example images*](https://1drv.ms/u/s!Al07CQ4AbykHkmk2dFpNPA8VObk4?e=1C7D3R)😛
                     2. set up the arguments: "Num. of anchors" and "Colorization resolution";
                     3. run the colorization (two modes supported):
                         - *Automatic mode*: click "Colorize" to get the automatically colorized output.
