@@ -4,7 +4,7 @@ import numpy as np
 from inference import setup_model, colorize_grayscale, predict_anchors
 
 ## local |  remote
-RUN_MODE = "local"
+RUN_MODE = "remote"
 if RUN_MODE != "local":
     os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/disco-beta.pth.rar")
     os.rename("disco-beta.pth.rar", "./checkpoints/disco-beta.pth.rar")
