@@ -8,6 +8,11 @@ RUN_MODE = "remote"
 if RUN_MODE != "local":
     os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/disco-beta.pth.rar")
     os.rename("disco-beta.pth.rar", "./checkpoints/disco-beta.pth.rar")
+    ## examples
+    os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/01.jpg")
+    os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/02.jpg")
+    os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/03.jpg")
+    os.system("wget https://huggingface.co/menghanxia/disco/resolve/main/04.jpg")
 
 ## step 1: set up model
 device = "cpu"
@@ -34,7 +39,7 @@ def switch_states(is_checked):
 demo = gr.Blocks(title="DISCO")
 with demo:
     gr.Markdown(value="""
-                    **Gradio demo for DISCO: Disentangled Image Colorization via Global Anchors**. Check our project page [*Here*](https://menghanxia.github.io/projects/disco.html).
+                    **Gradio demo for DISCO: Disentangled Image Colorization via Global Anchors**. Check our [project page](https://menghanxia.github.io/projects/disco.html).
                     """)
     with gr.Row():
         with gr.Column():
@@ -56,15 +61,23 @@ with demo:
     Button_show_anchor.click(fn=click_predanchors, inputs=[Image_input, Num_anchor, Radio_resolution, Ckeckbox_editable], outputs=Image_anchor)
     Button_run.click(fn=click_colorize, inputs=[Image_input, Image_anchor, Num_anchor, Radio_resolution, Ckeckbox_editable], \
                     outputs=Image_output)
+    
     ## guiline
     gr.Markdown(value="""    
                     **Guideline**
-                    1. upload your image; &nbsp; [*example images*](https://1drv.ms/u/s!Al07CQ4AbykHkmk2dFpNPA8VObk4?e=1C7D3R)😛
+                    1. upload your image or select one from the examples😛;
                     2. set up the arguments: "Num. of anchors" and "Colorization resolution";
                     3. run the colorization (two modes supported):
                         - *Automatic mode*: click "Colorize" to get the automatically colorized output.
                         - *Editable mode*: check ""Show editable anchors" and click "Predict anchors". Then, modify the colors of the predicted anchors (only anchor region will be used). Finally, click "Colorize" to get the result.
                     """)
+    gr.Examples(examples=[
+                ['01.jpg', 8, "Low (256x256)"],
+                ['02.jpg', 8, "Low (256x256)"],
+                ['03.jpg', 8, "Low (256x256)"],
+                ['04.jpg', 8, "Low (256x256)"],
+                ], 
+                inputs=[Image_input,Num_anchor,Radio_resolution], outputs=[Image_output], label="Examples")
     gr.HTML(value="""
                 <p style="text-align:center; color:orange"><a href='https://menghanxia.github.io/projects/disco.html' target='_blank'>DISCO Project Page</a> | <a href='https://github.com/MenghanXia/DisentangledColorization' target='_blank'>Github Repo</a></p>
                     """)
