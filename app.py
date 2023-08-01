@@ -44,8 +44,8 @@ with demo:
     with gr.Row():
         with gr.Column():
             with gr.Row():
-                Image_input = gr.Image(type="numpy", label="Input", interactive=True)
-                Image_anchor = gr.Image(type="numpy", label="Anchor", tool="color-sketch", interactive=True, visible=False)
+                Image_input = gr.Image(type="numpy", label="Input", interactive=True).style(height=480)
+                Image_anchor = gr.Image(type="numpy", label="Anchor", tool="color-sketch", interactive=True, visible=False).style(height=480)
             with gr.Row():
                 Num_anchor = gr.Number(type="int", value=8, label="Num. of anchors (3~14)")
                 Radio_resolution = gr.Radio(type="index", choices=["Low (256x256)", "High (512x512)"], \
