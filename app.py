@@ -86,4 +86,4 @@ with demo:
 if RUN_MODE == "local":
     demo.launch(server_name='9.134.253.83',server_port=7788)
 else:
-    demo.launch()
+    demo.launch(share=True)
