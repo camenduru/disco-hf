@@ -1,41 +1,10 @@
-# Configuration for Cog ⚙️
-# Reference: https://github.com/replicate/cog/blob/main/docs/yaml.md
-
 build:
-  # set to true if your model requires a GPU
-  cuda: "10.2"
-  gpu: true
-
-  # a list of ubuntu apt packages to install
-  system_packages:
-    # - "libgl1-mesa-glx"
-    # - "libglib2.0-0"
-    - "libgl1-mesa-dev"
-
-  # python version in the form '3.8' or '3.8.12'
-  python_version: "3.8"
-
-  # a list of packages in the format <package-name>==<version>
-  python_packages:
-    # - "numpy==1.19.4"
-    # - "torch==1.8.0"
-    # - "torchvision==0.9.0"
-    - "numpy==1.23.1"
-    - "torch==1.8.0"
-    - "torchvision==0.9.0"
-    - "opencv-python==4.6.0.66"
-    - "pandas==1.4.3"
-    - "pillow==9.2.0"
-    - "tqdm==4.64.0"
-    - "scikit-image==0.19.3"
-    - "scikit-learn==1.1.2"
-    - "scipy==1.9.1"
-  
-  # commands run after the environment is setup
-  # run:
-    # - "echo env is ready!"
-    # - "echo another command if needed"
-
-# predict.py defines how predictions are run on your model
+  gpu: false
+  python_version: "3.10"
+  run:
+    - apt update -y && apt install -y software-properties-common python3-launchpadlib && apt update -y && add-apt-repository -y ppa:git-core/ppa && apt update -y
+    - apt install -y gcc g++ cmake aria2 git git-lfs wget libgl1 libglib2.0-0 ffmpeg libgtk2.0-0 libopenmpi-dev
+    - pip install torch==2.1.0+cu121 torchvision==0.16.0+cu121 torchaudio==2.1.0+cu121 torchtext==0.16.0 torchdata==0.7.0 --extra-index-url https://download.pytorch.org/whl/cu121 -U
+    - pip install lpips yapf tensorboardx addict
+    - wget https://huggingface.co/menghanxia/disco/resolve/main/disco-beta.pth.rar -O /src/checkpoints/disco-beta.pth.rar
 predict: "predict.py:Predictor"
-#image: "r8.im/menghanxia/disco"
